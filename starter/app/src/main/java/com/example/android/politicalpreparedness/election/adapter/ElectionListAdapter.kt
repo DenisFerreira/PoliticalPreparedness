@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.android.politicalpreparedness.databinding.FragmentElectionItemBinding
+import com.example.android.politicalpreparedness.databinding.ViewholderElectionBinding
 import com.example.android.politicalpreparedness.network.models.Election
 
 class ElectionListAdapter(private val clickListener: ElectionListener) : ListAdapter<Election, ElectionViewHolder>(ElectionDiffCallback()) {
@@ -21,17 +21,18 @@ class ElectionListAdapter(private val clickListener: ElectionListener) : ListAda
 }
 
 //TODO: Create ElectionViewHolder
-class ElectionViewHolder(val binding: FragmentElectionItemBinding) : RecyclerView.ViewHolder(binding.root) {
+class ElectionViewHolder(val binding: ViewholderElectionBinding) : RecyclerView.ViewHolder(binding.root) {
     fun bind(clickListener: ElectionListener, item: Election) {
         binding.election = item
         binding.clickListener = clickListener
         binding.executePendingBindings()
     }
+
     //TODO: Add companion object to inflate ViewHolder (from)
     companion object {
         fun from(parent: ViewGroup): ElectionViewHolder {
             val layoutInflater = LayoutInflater.from(parent.context)
-            val binding = FragmentElectionItemBinding.inflate(layoutInflater, parent, false)
+            val binding = ViewholderElectionBinding.inflate(layoutInflater, parent, false)
 
             return ElectionViewHolder(binding)
         }
