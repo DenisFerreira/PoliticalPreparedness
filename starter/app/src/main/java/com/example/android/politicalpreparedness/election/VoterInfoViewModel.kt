@@ -17,15 +17,17 @@ class VoterInfoViewModel(private val repository: ElectionRepository, private val
     val correspondenceAddress = repository.correspondenceAddress
     val votingLocationURL = repository.votingLocationURL
     val ballotInfoURL = repository.ballotInfoUrl
+    val savedElections = repository.savedElections
+    val buttonText = MutableLiveData<String?>()
+
 
     //TODO: Add var and methods to populate voter info
-    fun refresh() {
+    private fun refresh() {
         viewModelScope.launch {
             repository.refreshVoterinfo(electionId, address)
-            val election = repository.findElection(electionId)
-            _isElectionSaved.value = election.value != null
         }
     }
+
     //TODO: Add var and methods to support loading URLs
     private val _url = MutableLiveData<Uri>()
     val url: LiveData<Uri>
@@ -40,32 +42,31 @@ class VoterInfoViewModel(private val repository: ElectionRepository, private val
     fun endNavigateURL() {
         _url.value = null
     }
+
     //TODO: Add var and methods to save and remove elections to local database
-    fun followElection() {
-        viewModelScope.launch {
-            voterInfo.value?.let{
-                repository.saveElection(it.election)
-                _isElectionSaved.value = true
-                Log.i("VoterinfoViewModel", "election saved")
-            }
-        }
-    }
-
-    fun unfollowElection() {
-        viewModelScope.launch {
-            voterInfo.value?.let{
-                repository.removeElection(it.election)
-                _isElectionSaved.value = false
-                Log.i("VoterinfoViewModel", "election removed")
-            }
-        }
-
-    }
     //TODO: cont'd -- Populate initial state of save button to reflect proper action based on election saved status
     //TODO: change live data to use mutablelivedata to be refreshed after button
-    val _isElectionSaved = MutableLiveData<Boolean>()
-    val isElectionSaved : LiveData<Boolean>
-        get()  = _isElectionSaved
+    fun toggleSaveElection() {
+        val election = voterInfo.value?.election ?: return
+
+        savedElections.value?.let { savedElections ->
+            val idsList = savedElections.map { it.id }
+            if (idsList.contains(election.id)) {
+                viewModelScope.launch {
+                    repository.removeElection(election)
+                    Log.i("VoterInfoViewModel", "election removed")
+                }
+                return
+            }
+        }
+
+        viewModelScope.launch {
+            repository.saveElection(election)
+            Log.i("VoterInfoViewModel", "election Saved")
+        }
+    }
+
+    fun isElectionSaved(electionId: Int) = savedElections.value?.map { it.id }?.contains(electionId)
 
 
     /**
