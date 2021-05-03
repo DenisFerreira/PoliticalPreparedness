@@ -26,6 +26,7 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/upcoming_elections_recyclerView"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             app:layout_constraintBottom_toTopOf="@+id/guideline"
@@ -52,6 +53,7 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/saved_elections_recyclerView"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"

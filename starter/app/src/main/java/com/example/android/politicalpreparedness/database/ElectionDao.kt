@@ -17,7 +17,7 @@ interface ElectionDao {
     fun findAll() : LiveData<List<Election>>
 
     //TODO: Add select single election query
-    @Query("SELECT * FROM election_table WHERE id = :id LIMIT 1")
+    @Query("SELECT * FROM election_table WHERE id = :id")
     fun findElection(id: Int): LiveData<Election>
 
     //TODO: Add delete query
