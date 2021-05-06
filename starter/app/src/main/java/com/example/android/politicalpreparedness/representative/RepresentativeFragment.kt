@@ -1,27 +1,41 @@
 package com.example.android.politicalpreparedness.representative
 
+import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
+import android.content.pm.PackageManager
 import android.location.Geocoder
 import android.location.Location
 import android.os.Bundle
-import android.view.*
+import android.os.Looper
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.example.android.politicalpreparedness.database.ElectionDatabase
-import com.example.android.politicalpreparedness.databinding.FragmentElectionBinding
+import com.example.android.politicalpreparedness.R
 import com.example.android.politicalpreparedness.databinding.FragmentRepresentativeBinding
-import com.example.android.politicalpreparedness.election.ElectionsViewModel
-import com.example.android.politicalpreparedness.election.ElectionsViewModelFactory
-import com.example.android.politicalpreparedness.election.repository.ElectionRepository
 import com.example.android.politicalpreparedness.network.models.Address
-import java.util.Locale
+import com.example.android.politicalpreparedness.representative.adapter.setNewValue
+import com.google.android.gms.location.*
+import com.google.android.material.snackbar.Snackbar
+import java.util.*
 
 class DetailFragment : Fragment() {
 
     companion object {
-        //TODO: Add Constant for Location request
+        //DONE: Add Constant for Location request
+        private val REQUEST_LOCATION_PERMISSION = 1
     }
+
+    private var updateLocationRequired: Boolean = false
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
 
     //TODO: Declare ViewModel
     private val viewModel: RepresentativeViewModel by viewModels()
@@ -29,40 +43,88 @@ class DetailFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+                              savedInstanceState: Bundle?): View {
         binding = FragmentRepresentativeBinding.inflate(inflater, container, false)
+        binding.viewModel = viewModel
+        binding.lifecycleOwner = this
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+
         //TODO: Establish bindings
 
         //TODO: Define and assign Representative adapter
-
         //TODO: Populate Representative adapter
 
         //TODO: Establish button listeners for field and location search
+        binding.buttonLocation.setOnClickListener {
+            hideKeyboard()
+            if (checkLocationPermissions()) {
+                updateLocationRequired = true
+                updateLocation()
+            } else
+                Snackbar.make(requireView(), "Permission not granted", Snackbar.LENGTH_SHORT).show()
+
+        }
+
+        binding.buttonSearch.setOnClickListener {
+            viewModel.findRepresentatives()
+        }
+
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter.createFromResource(
+                requireContext(),
+                R.array.states,
+                android.R.layout.simple_spinner_item
+        ).also { adapter ->
+            // Specify the layout to use when the list of choices appears
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            // Apply the adapter to the spinner
+            binding.state.adapter = adapter
+        }
+        binding.state.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                (parent?.getItemAtPosition(position) as String?)?.let { state ->
+                    viewModel.state.value = state
+                }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
+
         return binding.root
     }
 
+    @SuppressLint("MissingPermission")
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         //TODO: Handle location permission result to get location on permission granted
+        if (requestCode == REQUEST_LOCATION_PERMISSION) {
+            if (grantResults.isNotEmpty() && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                checkLocationPermissions()
+            }
+        }
     }
 
+    @SuppressLint("MissingPermission")
     private fun checkLocationPermissions(): Boolean {
         return if (isPermissionGranted()) {
             true
         } else {
-            //TODO: Request Location permissions
+            ActivityCompat.requestPermissions(
+                    requireActivity(),
+                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                    REQUEST_LOCATION_PERMISSION
+            )
             false
         }
     }
 
-    private fun isPermissionGranted() : Boolean {
-        //TODO: Check if permission is already granted and return (true = granted, false = denied/other)
-        return false
-    }
 
-    private fun getLocation() {
-        //TODO: Get location from LocationServices
-        //TODO: The geoCodeLocation method is a helper function to change the lat/long location to a human readable street address
+    private fun isPermissionGranted(): Boolean {
+        return ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
     }
 
     private fun geoCodeLocation(location: Location): Address {
@@ -77,6 +139,46 @@ class DetailFragment : Fragment() {
     private fun hideKeyboard() {
         val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view!!.windowToken, 0)
+        requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
+
+    }
+
+    private var locationCallback: LocationCallback = object : LocationCallback() {
+        override fun onLocationResult(locationResult: LocationResult) {
+            if (updateLocationRequired) {
+                val locationList = locationResult.locations
+                if (locationList.isNotEmpty()) {
+                    val location = locationList.last()
+                    val address = geoCodeLocation(location)
+                    binding.state.setNewValue(address.state)
+                    viewModel.findRepresentatives(address)
+                    updateLocationRequired = false;
+                }
+            }
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun updateLocation() {
+        val locationRequest = LocationRequest.create()?.apply {
+            interval = 10000
+            fastestInterval = 5000
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        }
+
+        fusedLocationClient.requestLocationUpdates(
+                locationRequest,
+                locationCallback,
+                Looper.getMainLooper())
+
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        LocationServices
+                .getFusedLocationProviderClient(requireContext())
+                .removeLocationUpdates(locationCallback)
+
     }
 
 }
