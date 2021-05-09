@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.android.politicalpreparedness.R
 import com.example.android.politicalpreparedness.databinding.ViewholderRepresentativeBinding
-import com.example.android.politicalpreparedness.election.adapter.ElectionViewHolder
 import com.example.android.politicalpreparedness.network.models.Channel
 import com.example.android.politicalpreparedness.representative.model.Representative
 
@@ -35,8 +34,9 @@ class RepresentativeViewHolder(val binding: ViewholderRepresentativeBinding) : R
         binding.representativePhoto.setImageResource(R.drawable.ic_profile)
 
         //TODO: Show social links ** Hint: Use provided helper methods
+        item.official.channels?.let { showSocialLinks(it) }
         //TODO: Show www link ** Hint: Use provided helper methods
-
+        item.official.urls?.let { showWWWLinks(it) }
         binding.executePendingBindings()
     }
 
@@ -95,9 +95,4 @@ class RepresentativeViewHolder(val binding: ViewholderRepresentativeBinding) : R
 class RepresentativeDiffCallback : DiffUtil.ItemCallback<Representative>() {
     override fun areItemsTheSame(oldItem: Representative, newItem: Representative) = (oldItem.office.name == newItem.office.name) && (oldItem.official.name == newItem.official.name)
     override fun areContentsTheSame(oldItem: Representative, newItem: Representative) = oldItem == newItem
-}
-
-//DONE: Create RepresentativeListener
-class RepresentativeListener(val clickListener: (representative: Representative) -> Unit) {
-    fun onClick(representative: Representative) = clickListener(representative)
 }

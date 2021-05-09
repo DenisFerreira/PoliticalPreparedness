@@ -8,6 +8,9 @@ buildscript {
         version_kotlin_serialization = "0.14.0"
         version_kotlin_coroutines = "1.1.0"
         version_lifecycle_extensions = '2.2.0'
+        espressoVersion = '3.2.0-beta01'
+        junitVersion = '4.12'
+        mockitoVersion = '2.8.9'
         version_moshi = "1.9.2"
         version_navigation = "2.2.1"
         version_retrofit = "2.7.2"
@@ -16,6 +19,12 @@ buildscript {
         version_glide = "4.11.0"
         version_play_services_location = "17.0.0"
         version_room = "2.2.5"
+        androidXTestCoreVersion = '1.2.0'
+        robolectricVersion = '4.3.1'
+        androidXTestExtKotlinRunnerVersion = '1.1.1'
+        archTestingVersion = '2.0.0'
+        dexMakerVersion = '2.12.1'
+        archTestingVersion = '2.0.0'
     }
 
     repositories {

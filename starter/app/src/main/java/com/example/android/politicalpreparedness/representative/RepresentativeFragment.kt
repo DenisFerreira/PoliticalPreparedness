@@ -20,8 +20,12 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.android.politicalpreparedness.R
+import com.example.android.politicalpreparedness.database.ElectionDatabase
 import com.example.android.politicalpreparedness.databinding.FragmentRepresentativeBinding
+import com.example.android.politicalpreparedness.election.repository.ElectionRepository
+import com.example.android.politicalpreparedness.network.CivicsApi
 import com.example.android.politicalpreparedness.network.models.Address
+import com.example.android.politicalpreparedness.representative.adapter.RepresentativeListAdapter
 import com.example.android.politicalpreparedness.representative.adapter.setNewValue
 import com.google.android.gms.location.*
 import com.google.android.material.snackbar.Snackbar
@@ -31,14 +35,17 @@ class DetailFragment : Fragment() {
 
     companion object {
         //DONE: Add Constant for Location request
-        private val REQUEST_LOCATION_PERMISSION = 1
+        private const val REQUEST_LOCATION_PERMISSION = 1
     }
 
     private var updateLocationRequired: Boolean = false
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
     //TODO: Declare ViewModel
-    private val viewModel: RepresentativeViewModel by viewModels()
+    private val viewModel: RepresentativeViewModel by viewModels {
+        RepresentativeViewModelFactory(ElectionRepository(ElectionDatabase.getInstance(requireContext()).electionDao, apiService = CivicsApi
+                .retrofitService))
+    }
     private lateinit var binding: FragmentRepresentativeBinding
 
     override fun onCreateView(inflater: LayoutInflater,
@@ -50,10 +57,17 @@ class DetailFragment : Fragment() {
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
 
-        //TODO: Establish bindings
+        //DONE: Establish bindings
 
         //TODO: Define and assign Representative adapter
         //TODO: Populate Representative adapter
+        val listAdapter = RepresentativeListAdapter()
+        binding.representativesRecyclerView.adapter = listAdapter
+        viewModel.representatives.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+            it?.let {
+                listAdapter.submitList(it)
+            }
+        })
 
         //TODO: Establish button listeners for field and location search
         binding.buttonLocation.setOnClickListener {
@@ -147,13 +161,12 @@ class DetailFragment : Fragment() {
         override fun onLocationResult(locationResult: LocationResult) {
             if (updateLocationRequired) {
                 val locationList = locationResult.locations
-                if (locationList.isNotEmpty()) {
-                    val location = locationList.last()
-                    val address = geoCodeLocation(location)
-                    binding.state.setNewValue(address.state)
-                    viewModel.findRepresentatives(address)
-                    updateLocationRequired = false;
-                }
+                if (locationList.isEmpty()) return
+                val location = locationList.last()
+                val address = geoCodeLocation(location)
+                binding.state.setNewValue(address.state)
+                viewModel.findRepresentatives(address)
+                updateLocationRequired = false
             }
         }
     }

@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.android.politicalpreparedness.database.ElectionDao
-import com.example.android.politicalpreparedness.network.CivicsApi
+import com.example.android.politicalpreparedness.network.CivicsApiService
 import com.example.android.politicalpreparedness.network.models.Election
 import com.example.android.politicalpreparedness.network.models.VoterInfoResponse
 import com.example.android.politicalpreparedness.representative.model.Representative
@@ -13,7 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 
-class ElectionRepository(private val electionDao: ElectionDao, val dispatcher: CoroutineDispatcher = Dispatchers.IO) {
+class ElectionRepository(private val electionDao: ElectionDao, val dispatcher: CoroutineDispatcher = Dispatchers.IO, val apiService: CivicsApiService) {
 
     private val _upcomingElections = MutableLiveData<List<Election>>()
     val upcomingElections: LiveData<List<Election>>
@@ -49,8 +49,7 @@ class ElectionRepository(private val electionDao: ElectionDao, val dispatcher: C
 
     suspend fun refreshUpComingElections() = withContext(dispatcher) {
         try {
-            val response = CivicsApi
-                    .retrofitService
+            val response = apiService
                     .getElections()
             val elections = response.elections
             withContext(Dispatchers.Main) {
@@ -65,8 +64,7 @@ class ElectionRepository(private val electionDao: ElectionDao, val dispatcher: C
 
     suspend fun refreshVoterinfo(electionId: Int, address: String) = withContext(dispatcher) {
         try {
-            val response = CivicsApi
-                    .retrofitService
+            val response = apiService
                     .getVoterInfo(address, electionId.toLong())
             withContext(Dispatchers.Main) {
                 _voterInfo.postValue(response)
@@ -83,8 +81,7 @@ class ElectionRepository(private val electionDao: ElectionDao, val dispatcher: C
 
     suspend fun refreshRepresentatives(address: String) {
         try {
-            val response = CivicsApi
-                    .retrofitService
+            val response = apiService
                     .getRepresentatives(address)
             val representatives = response.representativesList()
 

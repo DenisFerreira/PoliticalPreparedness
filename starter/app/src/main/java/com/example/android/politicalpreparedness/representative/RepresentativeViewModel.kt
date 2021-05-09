@@ -1,9 +1,7 @@
 package com.example.android.politicalpreparedness.representative
 
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
+import com.example.android.politicalpreparedness.election.ElectionsViewModel
 import com.example.android.politicalpreparedness.election.repository.ElectionRepository
 import com.example.android.politicalpreparedness.network.models.Address
 import kotlinx.coroutines.launch
@@ -42,6 +40,9 @@ class RepresentativeViewModel(val repository: ElectionRepository) : ViewModel() 
         city.value = address.city
         state.value = address.state
         zip.value = address.zip
+        viewModelScope.launch {
+            repository.refreshRepresentatives(address.toFormattedString())
+        }
     }
 
     fun findRepresentatives() {
@@ -82,4 +83,12 @@ class RepresentativeViewModel(val repository: ElectionRepository) : ViewModel() 
     }
 
 
+}
+
+class RepresentativeViewModelFactory(private val repository: ElectionRepository): ViewModelProvider.Factory {
+    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(RepresentativeViewModel::class.java))
+            return RepresentativeViewModel(repository) as T
+        throw IllegalArgumentException("Unknown ViewModel class")
+    }
 }

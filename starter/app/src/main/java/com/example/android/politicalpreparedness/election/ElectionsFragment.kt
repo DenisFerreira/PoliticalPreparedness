@@ -13,13 +13,15 @@ import com.example.android.politicalpreparedness.databinding.FragmentElectionBin
 import com.example.android.politicalpreparedness.election.adapter.ElectionListAdapter
 import com.example.android.politicalpreparedness.election.adapter.ElectionListener
 import com.example.android.politicalpreparedness.election.repository.ElectionRepository
+import com.example.android.politicalpreparedness.network.CivicsApi
 import com.example.android.politicalpreparedness.network.models.Election
 
 class ElectionsFragment : Fragment() {
 
     //DONE: Declare ViewModel
     private val viewModel by viewModels<ElectionsViewModel> {
-        ElectionsViewModelFactory(ElectionRepository(ElectionDatabase.getInstance(requireContext()).electionDao))
+        ElectionsViewModelFactory(ElectionRepository(ElectionDatabase.getInstance(requireContext()).electionDao, apiService = CivicsApi
+                .retrofitService))
     }
     private lateinit var binding: FragmentElectionBinding
 

@@ -8,40 +8,81 @@
             type="com.example.android.politicalpreparedness.representative.model.Representative" />
     </data>
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
         <ImageView
             android:id="@+id/representativePhoto"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            app:profileImage="@{representative.official.photoUrl}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             tools:srcCompat="@tools:sample/avatars" />
 
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/office_name"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="25dp"
+            android:layout_marginStart="4dp"
             android:layout_weight="1"
-            android:text="TextView" />
+            android:text="@{representative.office.name}"
+            app:layout_constraintStart_toEndOf="@id/representativePhoto"
+            app:layout_constraintTop_toTopOf="@id/representativePhoto"
+            tools:text="OFFICE NAME" />
+
+        <TextView
+            android:id="@+id/official_name"
+            android:layout_width="wrap_content"
+            android:layout_height="25dp"
+            android:layout_weight="1"
+            android:text="@{representative.official.name}"
+            app:layout_constraintStart_toStartOf="@id/office_name"
+            app:layout_constraintTop_toBottomOf="@id/office_name"
+            tools:text="OFFICIAL NAME" />
+
+        <TextView
+            android:id="@+id/official_party"
+            android:layout_width="wrap_content"
+            android:layout_height="26dp"
+            android:layout_weight="1"
+            android:text="@{representative.official.party}"
+            app:layout_constraintStart_toStartOf="@id/office_name"
+            app:layout_constraintTop_toBottomOf="@id/official_name"
+            tools:text="OFFICIAL PARTY" />
 
         <ImageView
             android:id="@+id/facebookIcon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:srcCompat="@tools:sample/avatars" />
+            android:layout_width="35sp"
+            android:layout_height="35dp"
+            android:layout_margin="8dp"
+            android:src="@drawable/ic_facebook"
+            app:layout_constraintBottom_toBottomOf="@id/representativePhoto"
+            app:layout_constraintEnd_toStartOf="@id/twitterIcon"
+            app:layout_constraintTop_toBottomOf="@id/office_name" />
 
         <ImageView
             android:id="@+id/twitterIcon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:srcCompat="@tools:sample/avatars" />
+            android:layout_width="35sp"
+            android:layout_height="35dp"
+            android:layout_margin="8dp"
+            android:src="@drawable/ic_twitter"
+            app:layout_constraintBottom_toBottomOf="@id/representativePhoto"
+            app:layout_constraintEnd_toStartOf="@id/wwwIcon"
+            app:layout_constraintTop_toBottomOf="@id/office_name" />
 
         <ImageView
             android:id="@+id/wwwIcon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:srcCompat="@tools:sample/avatars" />
-    </LinearLayout>
+            android:layout_width="35sp"
+            android:layout_height="35dp"
+            android:layout_margin="8dp"
+            android:src="@drawable/ic_www"
+            app:layout_constraintBottom_toBottomOf="@id/representativePhoto"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/office_name" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

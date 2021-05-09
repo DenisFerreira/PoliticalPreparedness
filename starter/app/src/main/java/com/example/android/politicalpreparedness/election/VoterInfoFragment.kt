@@ -11,6 +11,7 @@ import com.example.android.politicalpreparedness.R
 import com.example.android.politicalpreparedness.database.ElectionDatabase
 import com.example.android.politicalpreparedness.databinding.FragmentVoterInfoBinding
 import com.example.android.politicalpreparedness.election.repository.ElectionRepository
+import com.example.android.politicalpreparedness.network.CivicsApi
 
 
 class VoterInfoFragment : Fragment() {
@@ -27,7 +28,8 @@ class VoterInfoFragment : Fragment() {
         val electionId = VoterInfoFragmentArgs.fromBundle(requireArguments()).argElectionId
         val address = VoterInfoFragmentArgs.fromBundle(requireArguments()).argDivision.toFormattedString()
         viewModel = VoterInfoViewModelFactory(
-                ElectionRepository(ElectionDatabase.getInstance(requireContext()).electionDao),
+                ElectionRepository(ElectionDatabase.getInstance(requireContext()).electionDao, apiService = CivicsApi
+                        .retrofitService),
                 electionId,
                 address
         ).create(VoterInfoViewModel::class.java)
