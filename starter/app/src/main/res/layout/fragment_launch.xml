@@ -14,6 +14,17 @@
 
         <!-- TODO: Add Button to navigate to representatives. -->
 
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@+id/upcomingButton"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ballot_logo"
+            android:contentDescription="@string/ballot_logo" />
+
         <Button
             android:id="@+id/upcomingButton"
             android:layout_width="0dp"
@@ -21,13 +32,15 @@
             android:text="@string/upcoming_elections"
             app:layout_constraintBottom_toTopOf="@+id/representativeButton"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            style="@style/DefaultButton" />
 
         <Button
             android:id="@+id/representativeButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/find_my_representatives"
+            style="@style/DefaultButton"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

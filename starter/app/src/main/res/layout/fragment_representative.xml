@@ -22,6 +22,8 @@
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            android:layout_margin="8dp"
+            style="@style/LabelText"
             android:text="@string/representative_search"/>
 
         <!-- TODO: Add data binding value -->
@@ -101,6 +103,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/find_my_representative"
+            style="@style/DefaultButton"
             android:enabled="@{viewModel.valid}"
             app:layout_constraintTop_toBottomOf="@id/zip" />
 
@@ -109,6 +112,7 @@
             android:id="@+id/button_location"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            style="@style/DefaultButton"
             android:text="@string/use_my_location"
             app:layout_constraintTop_toBottomOf="@id/button_search" />
 
@@ -118,6 +122,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/my_representatives"
+            android:layout_margin="8dp"
+            style="@style/LabelText"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/button_location" />
 

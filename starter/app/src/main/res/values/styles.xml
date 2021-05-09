@@ -9,6 +9,28 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="LabelText">
+        <item name="android:fontFamily">sans-serif-black</item>
+        <item name="android:textColor">#706F6F</item>
+        <item name="android:textSize">24sp</item>
+    </style>
+
+    <style name="DefaultButton">
+        <item name="android:layout_margin">4dp</item>
+        <item name="android:backgroundTint">@color/colorPrimary</item>
+        <item name="android:textColor">#FFF</item>
+    </style>
+
+    <style name="body_voterinfo">
+        <item name="android:layout_margin">@dimen/default_padding</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="state" parent="body_voterinfo">
+        <item name="android:textColor">@color/colorPrimary</item>
+    </style>
+
     <!-- TODO: Add necessary styles -->
+
 
 </resources>
