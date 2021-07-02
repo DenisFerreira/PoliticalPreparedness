@@ -1,52 +1,18 @@
-# README Template
+# PoliticalPreparedness
 
-Below is a template provided for use when building your README file for students.
+Projeto final do curso de formação Kotlin Android Developer da Udacity.
 
-# Project Title
+# Descrição
 
-Project description goes here.
+Este projeto busca implementar maior parte dos conhecimentos necessários para desenvolvimento de aplicações mobile que buscam performance, escalabilidade e manutenabilidade.
+A aplicação consome uma API com informações dos processos eleitorais americanos, informações dos representantes e eleições sendo realizadas pela proximidade do usuário.
+A aplicação também permite a gestão de uma agenda de eleições para o usuário e acesso aos meios de comunicação dos representantes.
 
 ## Getting Started
 
-Instructions for how to get a copy of the project running on your local machine.
+Realize a cópia do repositório e realize a build do projeto de acordo com sua ferramenta de escolha. Recomenda-se uso do Android Studio.
+É necessário o registro de uma chave da API 
 
-### Dependencies
+https://www.googleapis.com/civicinfo/v2/
 
-```
-Examples here
-```
-
-### Installation
-
-Step by step explanation of how to get a dev environment running.
-
-List out the steps
-
-```
-Give an example here
-```
-
-## Testing
-
-Explain the steps needed to run any automated tests
-
-### Break Down Tests
-
-Explain what each test does and why
-
-```
-Examples here
-```
-## Project Instructions
-
-This section should contain all the student deliverables for this project.
-
-## Built With
-
-* [Item1](www.item1.com) - Description of item
-* [Item2](www.item2.com) - Description of item
-* [Item3](www.item3.com) - Description of item
-
-Include all items used to build project.
-
-## License
+Arquivo: PoliticalPreparedness/starter/app/src/main/java/com/example/android/politicalpreparedness/network/CivicsHttpClient.kt
